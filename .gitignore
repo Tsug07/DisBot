@@ -1,34 +1,34 @@
-# Environment variables
+# Ignorar todos os arquivos .env em qualquer pasta
+**/.env
 .env
+.env.local
 
-# Google credentials
-*.json
+# Ignorar credenciais e arquivos sensíveis
+**/gen-lang-client-*.json
+**/credentials.json
+**/service-account*.json
+**/*credentials*.json
+
+# Ignorar logs e backups
+**/bot_logs.log
+**/backups/
+**/estado_empresas.json
 
 # Python
 __pycache__/
-*.py[cod]
-*$py.class
-*.so
-.Python
-build/
-develop-eggs/
-dist/
-downloads/
-eggs/
-.eggs/
-lib/
-lib64/
-parts/
-sdist/
-var/
-wheels/
+*.pyc
+*.pyo
 *.egg-info/
-.installed.cfg
-*.egg
+venv/
+.venv/
+env/
 
-# VS Code
+# IDE
 .vscode/
-*.code-workspace
+.idea/
+*.swp
+*.swo
 
-# Estado do bot
-estado_empresas.json
+# OS
+.DS_Store
+Thumbs.db
