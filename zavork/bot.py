@@ -164,21 +164,36 @@ async def help_command(interaction: discord.Interaction):
     )
     
     commands_info = {
+        "🎵 **REPRODUÇÃO**": "",
         "/play <música>": "Reproduz uma música do YouTube",
         "/pause": "Pausa a música atual",
         "/resume": "Retoma a música",
-        "/skip": "Pula para próxima música",
+        "/skip": "Vota para pular a música (50% +1 votos)",
+        "/forceskip": "[Admin] Pula sem votação",
         "/stop": "Para a reprodução e limpa a fila",
-        "/queue": "Mostra a fila de músicas",
+        "/volume <0-200>": "Ajusta o volume (padrão: 100%)",
         "/now": "Mostra a música tocando agora",
-        "/volume <0-200>": "Ajusta o volume",
+        "/queue": "Mostra a fila de músicas",
+        "\n📚 **PLAYLISTS**": "",
+        "/playlist_create <nome>": "Cria uma nova playlist",
+        "/playlist_delete <nome>": "Deleta uma playlist",
+        "/playlist_add <nome> <música>": "Adiciona música à playlist",
+        "/playlist_remove <nome> <posição>": "Remove música da playlist",
+        "/playlist_list": "Lista suas playlists",
+        "/playlist_show <nome>": "Mostra músicas de uma playlist",
+        "/playlist_load <nome>": "Carrega playlist na fila",
+        "\n⚙️ **UTILITÁRIOS**": "",
         "/ping": "Verifica a latência do bot",
+        "/help": "Mostra esta mensagem",
     }
     
     for cmd, desc in commands_info.items():
-        embed.add_field(name=cmd, value=desc, inline=False)
+        if desc == "":
+            embed.add_field(name=cmd, value="", inline=False)
+        else:
+            embed.add_field(name=cmd, value=desc, inline=False)
     
-    embed.set_footer(text="Desenvolvido por Canella & Santos | Zavork Music Bot")
+    embed.set_footer(text="Desenvolvido por Hugo L. Almeida | Zavork Music Bot")
     await interaction.response.send_message(embed=embed)
     logger.info(f"Comando /help executado por {interaction.user}")
 
