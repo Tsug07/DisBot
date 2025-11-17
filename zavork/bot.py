@@ -71,7 +71,7 @@ class ZavorkBot(commands.Bot):
     async def on_app_command_error(self, interaction: discord.Interaction, error: app_commands.AppCommandError):
         """Handler de erros para comandos slash"""
         logger.error(f"Erro em comando: {error}")
-        
+
         if isinstance(error, app_commands.CommandNotFound):
             await interaction.response.send_message(
                 "❌ Comando não encontrado",
@@ -82,6 +82,62 @@ class ZavorkBot(commands.Bot):
                 f"❌ Erro ao executar comando: {error}",
                 ephemeral=True
             )
+
+    async def on_member_join(self, member: discord.Member):
+        """Evento disparado quando um novo membro entra no servidor"""
+        logger.info(f"Novo membro entrou: {member.name} ({member.id}) no servidor {member.guild.name}")
+
+        # Criar embed de boas-vindas
+        embed = discord.Embed(
+            title="🎉 Bem-vindo ao servidor!",
+            description=f"Olá {member.mention}! Seja muito bem-vindo(a)!",
+            color=0x00FF00
+        )
+        embed.set_thumbnail(url=member.display_avatar.url)
+        embed.add_field(
+            name="📝 Sobre o servidor",
+            value="Este servidor possui o bot Zavork Music para tocar suas músicas favoritas!",
+            inline=False
+        )
+        embed.add_field(
+            name="🎵 Comandos de Música",
+            value="Use `/help` para ver todos os comandos disponíveis!",
+            inline=False
+        )
+        embed.set_footer(text=f"Você é o membro #{member.guild.member_count}")
+
+        # Procurar canal para enviar (prioridade: system_channel > primeiro canal de texto)
+        channel = None
+
+        # Tentar usar o canal do sistema do servidor
+        if member.guild.system_channel:
+            channel = member.guild.system_channel
+            logger.info(f"Usando canal do sistema: {channel.name}")
+        else:
+            # Procurar um canal chamado "geral", "general" ou similar
+            for text_channel in member.guild.text_channels:
+                if text_channel.name.lower() in ['geral', 'general', 'chat', 'bate-papo']:
+                    channel = text_channel
+                    logger.info(f"Usando canal encontrado: {channel.name}")
+                    break
+
+            # Se não encontrou, usar o primeiro canal de texto onde o bot pode enviar
+            if not channel:
+                for text_channel in member.guild.text_channels:
+                    if text_channel.permissions_for(member.guild.me).send_messages:
+                        channel = text_channel
+                        logger.info(f"Usando primeiro canal disponível: {channel.name}")
+                        break
+
+        # Enviar mensagem
+        if channel:
+            try:
+                await channel.send(embed=embed)
+                logger.info(f"Mensagem de boas-vindas enviada para {member.name} no canal {channel.name} do servidor {member.guild.name}")
+            except Exception as e:
+                logger.error(f"Erro ao enviar mensagem de boas-vindas: {e}")
+        else:
+            logger.warning(f"Nenhum canal disponível encontrado no servidor {member.guild.name}")
 
 # === CRIAR BOT ===
 bot = ZavorkBot()
